@@ -1,0 +1,2 @@
+import type { DashboardItem } from '../types/domain';
+export const ControlPanel=({items,onFilter}:{items:DashboardItem[];onFilter:(value:string)=>void})=><section className="card p-4"><h2 className="font-black text-xl">工作台筛选</h2><input className="mt-3 w-full rounded-md border px-3 py-2" placeholder="搜索功能、标签或状态" onChange={e=>onFilter(e.target.value)} /><p className="mt-3 text-sm text-stone-600">当前共 {items.length} 条演示记录，所有操作保存在浏览器本地。</p></section>;

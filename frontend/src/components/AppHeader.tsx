@@ -1,0 +1,2 @@
+import { APP_NAME } from '../constants/app.constants';
+export const AppHeader=()=> <header className="bg-[#edf6e8] border-b border-[#dce8d8]"><div className="mx-auto max-w-7xl px-5 py-6 flex flex-col md:flex-row md:items-end md:justify-between gap-3"><div><p className="text-sm font-bold text-field">cyfreshfood-frontend</p><h1 className="text-3xl font-black">{APP_NAME}</h1></div><p className="max-w-xl text-sm text-stone-600">食品保质期管理工具</p></div></header>;

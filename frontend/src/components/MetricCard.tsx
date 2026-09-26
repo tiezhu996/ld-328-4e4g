@@ -1,0 +1,2 @@
+interface Props{label:string;value:string;note:string}
+export const MetricCard=({label,value,note}:Props)=><div className="card p-4"><p className="text-sm text-stone-500">{label}</p><strong className="mt-2 block text-3xl">{value}</strong><p className="mt-2 text-sm text-stone-600">{note}</p></div>;

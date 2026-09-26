@@ -1,0 +1,1 @@
+export class AppException extends Error{constructor(message:string,readonly code='APP_ERROR'){super(message);this.name='AppException';}}

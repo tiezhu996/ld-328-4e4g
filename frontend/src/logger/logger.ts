@@ -1,0 +1,2 @@
+type Level='debug'|'info'|'warn'|'error';
+export const logger={debug:(m:string,p?:unknown)=>console.debug('[cyfreshfood-frontend]',m,p??''),info:(m:string,p?:unknown)=>console.info('[cyfreshfood-frontend]',m,p??''),warn:(m:string,p?:unknown)=>console.warn('[cyfreshfood-frontend]',m,p??''),error:(m:string,p?:unknown)=>console.error('[cyfreshfood-frontend]',m,p??'')};

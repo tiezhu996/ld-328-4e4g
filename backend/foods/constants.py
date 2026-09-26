@@ -1,0 +1,9 @@
+APP_NAME = '易腐食品保质期追踪'
+APP_CODE = 'cyfreshfood'
+REMINDER_DAYS = 3
+STATUS_FRESH = 'fresh'
+STATUS_EXPIRING = 'expiring'
+STATUS_EXPIRED = 'expired'
+STATUS_CONSUMED = 'consumed'
+FOOD_CATEGORIES = ['生鲜', '乳制品', '熟食', '烘焙', '冷冻', '干货']
+LOCATIONS = ['冰箱', 'pantry', '冷冻室', '餐边柜']

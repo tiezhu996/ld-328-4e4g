@@ -1,0 +1,83 @@
+name: cyfreshfood
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: ${COMPOSE_PROJECT_NAME:-cyfreshfood}-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "${DB_PORT:-17628}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    container_name: ${COMPOSE_PROJECT_NAME:-cyfreshfood}-redis
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+
+  backend:
+    build: ./backend
+    container_name: ${COMPOSE_PROJECT_NAME:-cyfreshfood}-backend
+    restart: unless-stopped
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: ${JWT_SECRET}
+      BACKEND_PORT: 8000
+    ports:
+      - "${BACKEND_PORT:-19628}:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    healthcheck:
+      test: ['CMD-SHELL', 'python -c "import urllib.request; urllib.request.urlopen(''http://localhost:8000/api/health'')"']
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  worker:
+    build: ./backend
+    container_name: ${COMPOSE_PROJECT_NAME:-cyfreshfood}-worker
+    command: celery -A shelf_life worker -l info
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_HOST: redis
+    depends_on:
+      - backend
+      - redis
+
+  frontend:
+    build: ./frontend
+    container_name: ${COMPOSE_PROJECT_NAME:-cyfreshfood}-frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-18628}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  db_data:
+  redis_data:
