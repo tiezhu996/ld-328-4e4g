@@ -1,6 +1,9 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.views import exception_handler as drf_exception_handler
+
 from .constants import APP_CODE, APP_NAME
+from .exceptions import BusinessException, InsufficientStockException
 from .services import (
     consume_food,
     consumption_history,
@@ -12,6 +15,17 @@ from .services import (
     reminders,
     report,
 )
+
+
+def api_exception_handler(exc, context):
+    if isinstance(exc, BusinessException):
+        data = {'code': exc.code, 'message': exc.message}
+        if isinstance(exc, InsufficientStockException):
+            data['remaining'] = exc.remaining
+            data['requested'] = exc.requested
+            data['unit'] = exc.unit
+        return Response(data, status=exc.http_status)
+    return drf_exception_handler(exc, context)
 
 
 @api_view(['GET'])
@@ -42,11 +56,13 @@ def reminders_view(_request):
 @api_view(['GET', 'POST'])
 def consumption_view(request):
     if request.method == 'POST':
-        return Response(consume_food(
+        result = consume_food(
             request.data.get('foodId', ''),
-            int(request.data.get('quantity', 1)),
+            request.data.get('quantity', 1),
             request.data.get('member', '家庭成员'),
-        ))
+            request.data.get('date'),
+        )
+        return Response(result, status=201)
     return Response(consumption_history())
 
 

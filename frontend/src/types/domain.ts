@@ -27,6 +27,7 @@ export interface DashboardItem {
 
 export interface DashboardOverview {
   service: string;
+  today: string;
   total: number;
   fresh: number;
   expiring: number;

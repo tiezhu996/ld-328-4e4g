@@ -13,6 +13,9 @@ if os.getenv('DB_HOST'):
 else:
     DATABASES={'default':{'ENGINE':'django.db.backends.sqlite3','NAME':BASE_DIR / 'db.sqlite3'}}
 DEFAULT_AUTO_FIELD='django.db.models.BigAutoField'
-REST_FRAMEWORK={'UNAUTHENTICATED_USER':None}
+REST_FRAMEWORK={
+'UNAUTHENTICATED_USER':None,
+'EXCEPTION_HANDLER':'foods.views.api_exception_handler',
+}
 CELERY_BROKER_URL=f"redis://{os.getenv('REDIS_HOST','localhost')}:{os.getenv('REDIS_PORT','6379')}/0"
 CELERY_RESULT_BACKEND=CELERY_BROKER_URL

@@ -30,6 +30,7 @@ def dashboard():
     items = foods()
     return {
         'service': APP_CODE,
+        'today': TODAY.isoformat(),
         'total': len(items),
         'fresh': len([item for item in items if item['status'] == 'fresh']),
         'expiring': len([item for item in items if item['status'] == 'expiring']),
