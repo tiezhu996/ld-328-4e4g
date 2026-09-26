@@ -23,7 +23,7 @@ export const Dashboard = () => {
   const [report, setReport] = useState<ReportData>();
   const [family, setFamily] = useState<FamilyData>();
 
-  useEffect(() => {
+  const loadData = () => {
     api.dashboard().then(setOverview);
     api.intakeTemplate().then(setTemplate);
     api.reminders().then((data) => setReminders(data.messages));
@@ -31,6 +31,10 @@ export const Dashboard = () => {
     api.recipes().then((data) => setRecipes(data.recommendations));
     api.report().then(setReport);
     api.family().then(setFamily);
+  };
+
+  useEffect(() => {
+    loadData();
   }, []);
 
   return (
@@ -52,7 +56,12 @@ export const Dashboard = () => {
         <ReminderPanel messages={reminders} />
       </section>
       <section className="layout-grid">
-        <ConsumptionPanel records={consumptions} />
+        <ConsumptionPanel
+          foods={overview?.items ?? []}
+          records={consumptions}
+          members={family?.members.map((member) => member.name) ?? []}
+          onConsumed={loadData}
+        />
         <RecipePanel recommendations={recipes} />
       </section>
       <section className="layout-grid">

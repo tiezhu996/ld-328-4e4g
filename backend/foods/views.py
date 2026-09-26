@@ -1,6 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .constants import APP_CODE, APP_NAME
+from .exceptions import BusinessException
 from .services import (
     consume_food,
     consumption_history,
@@ -42,11 +43,22 @@ def reminders_view(_request):
 @api_view(['GET', 'POST'])
 def consumption_view(request):
     if request.method == 'POST':
-        return Response(consume_food(
-            request.data.get('foodId', ''),
-            int(request.data.get('quantity', 1)),
-            request.data.get('member', '家庭成员'),
-        ))
+        try:
+            quantity = int(request.data.get('quantity', 1))
+        except (TypeError, ValueError):
+            quantity = 0
+        try:
+            return Response(consume_food(
+                request.data.get('foodId', ''),
+                quantity,
+                request.data.get('member', '家庭成员'),
+            ))
+        except BusinessException as exc:
+            payload = {'updated': False, 'code': exc.code, 'message': exc.message}
+            remaining = getattr(exc, 'remaining', None)
+            if remaining is not None:
+                payload['remaining'] = remaining
+            return Response(payload, status=exc.status)
     return Response(consumption_history())
 
 

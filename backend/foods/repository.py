@@ -74,6 +74,30 @@ def list_foods():
     return [food.copy() for food in FOODS]
 
 
+def find_food(food_id):
+    return next((food for food in FOODS if food['id'] == food_id), None)
+
+
+def update_food_quantity(food_id, quantity):
+    food = find_food(food_id)
+    if food is None:
+        return None
+    food['quantity'] = max(0, quantity)
+    return food.copy()
+
+
+def add_consumption(food_id, quantity, member):
+    record = {
+        'id': f'c-{len(CONSUMPTIONS) + 1}',
+        'foodId': food_id,
+        'quantity': quantity,
+        'date': TODAY.isoformat(),
+        'member': member,
+    }
+    CONSUMPTIONS.append(record)
+    return record.copy()
+
+
 def list_consumptions():
     return [item.copy() for item in CONSUMPTIONS]
 

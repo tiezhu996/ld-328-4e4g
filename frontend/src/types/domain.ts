@@ -49,3 +49,14 @@ export interface FamilyData {
   members: Array<Record<string, string>>;
   activity: Array<Record<string, string>>;
 }
+
+export interface ConsumeResult {
+  updated: boolean;
+  foodId: string;
+  foodName: string;
+  remaining: number;
+  status: string;
+  member: string;
+  quantity: number;
+  date: string;
+}
